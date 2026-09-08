@@ -1,24 +1,9 @@
-# ============================================================
-# Data-inleesproces
-#
-# Leest de brondata in vanuit een CSV-bestand en voert een
-# eerste reeks controles uit: verplichte kolommen, datatypes,
-# omvang van de dataset, ontbrekende waarden, dubbele records
-# en ongeldige waarden. Dit gebeurt bewust vóór de opschoning
-# (zie R/data_opschonen.R), zodat problemen in de brondata
-# zichtbaar blijven in plaats van stilzwijgend te worden
-# opgelost.
-# ============================================================
-
 library(dplyr)
 library(readr)
 library(stringr)
 library(lubridate)
 library(janitor)
 
-# ============================================================
-# Instellingen
-# ============================================================
 
 VERPLICHTE_KOLOMMEN <- c(
   "transactie_id", "datum", "ministerie", "categorie", "leverancier",
@@ -26,7 +11,6 @@ VERPLICHTE_KOLOMMEN <- c(
   "factuurnummer", "omschrijving"
 )
 
-# Verwacht datatype per kolom. Wordt gebruikt door controleer_datatypes().
 VERWACHTE_TYPES <- c(
   transactie_id    = "tekst",
   datum            = "datum",
@@ -41,13 +25,6 @@ VERWACHTE_TYPES <- c(
   omschrijving     = "tekst"
 )
 
-# ============================================================
-# Hulpfuncties
-# ============================================================
-
-# Alle brondata wordt eerst als tekst ingelezen (zie lees_brondata()).
-# Deze functies bepalen per waarde of die, ondanks dat, alsnog geldig
-# is voor het verwachte datatype.
 
 is_geldig_numeriek <- function(waarden) {
   !is.na(suppressWarnings(as.numeric(waarden)))
@@ -61,17 +38,8 @@ is_ontbrekend <- function(waarden) {
   is.na(waarden) | stringr::str_trim(waarden) == ""
 }
 
-# ============================================================
-# 1. Brondata inlezen vanuit een CSV-bestand
-# ============================================================
 
-#' Leest het brondatabestand in als tekst.
-#'
-#' Alle kolommen worden als tekst ingelezen, zodat de controles in dit
-#' bestand zelf kunnen bepalen welke waarden wel of niet geldig zijn
-#' voor het verwachte datatype. Automatische typeconversie door readr
-#' zou dit soort problemen (bv. "geen datum" of "31-02-2026") stil
-#' laten verdwijnen in NA's, nog vóór ze gesignaleerd kunnen worden.
+
 lees_brondata <- function(bestandspad) {
   if (!file.exists(bestandspad)) {
     stop(sprintf("Brondatabestand niet gevonden: %s", bestandspad))
@@ -86,9 +54,6 @@ lees_brondata <- function(bestandspad) {
   janitor::clean_names(gegevens)
 }
 
-# ============================================================
-# 2. Controleren of alle verplichte kolommen aanwezig zijn
-# ============================================================
 
 controleer_verplichte_kolommen <- function(gegevens, verplichte_kolommen = VERPLICHTE_KOLOMMEN) {
   aanwezige_kolommen <- names(gegevens)
@@ -102,16 +67,8 @@ controleer_verplichte_kolommen <- function(gegevens, verplichte_kolommen = VERPL
   )
 }
 
-# ============================================================
-# 3. Datatypes controleren
-# ============================================================
 
-#' Controleert per verplichte kolom hoeveel waarden niet overeenkomen
-#' met het verwachte datatype (zie VERWACHTE_TYPES).
-#'
-#' Voor tekstkolommen wordt alleen gecontroleerd of de kolom bestaat
-#' (elke ingelezen waarde is per definitie tekst); ontbrekende tekst
-#' wordt gesignaleerd door signaleer_ontbrekende_waarden().
+
 controleer_datatypes <- function(gegevens, verwachte_types = VERWACHTE_TYPES) {
   gedeelde_kolommen <- intersect(names(verwachte_types), names(gegevens))
 
@@ -136,17 +93,11 @@ controleer_datatypes <- function(gegevens, verwachte_types = VERWACHTE_TYPES) {
   dplyr::bind_rows(resultaten)
 }
 
-# ============================================================
-# 4. Aantal rijen en kolommen bepalen
-# ============================================================
 
 bepaal_dimensies <- function(gegevens) {
   list(aantal_rijen = nrow(gegevens), aantal_kolommen = ncol(gegevens))
 }
 
-# ============================================================
-# 5. Ontbrekende waarden signaleren
-# ============================================================
 
 signaleer_ontbrekende_waarden <- function(gegevens) {
   aantallen <- vapply(gegevens, function(kolom) sum(is_ontbrekend(kolom)), integer(1))
@@ -158,16 +109,7 @@ signaleer_ontbrekende_waarden <- function(gegevens) {
     dplyr::arrange(dplyr::desc(aantal_ontbrekend))
 }
 
-# ============================================================
-# 6. Dubbele records signaleren
-# ============================================================
 
-#' Signaleert volledig identieke rijen in de ingelezen brondata.
-#'
-#' Dit betreft duplicatie op recordniveau (alle kolommen identiek),
-#' zoals die kan ontstaan bij een fout in de brondata-aanlevering.
-#' Specifiekere signalen zoals dubbele factuurnummers horen bij de
-#' risicodetectie (zie R/risico_detectie.R), niet bij het inlezen.
 signaleer_dubbele_records <- function(gegevens) {
   is_dubbel <- duplicated(gegevens) | duplicated(gegevens, fromLast = TRUE)
 
@@ -177,14 +119,7 @@ signaleer_dubbele_records <- function(gegevens) {
   )
 }
 
-# ============================================================
-# 7. Ongeldige waarden signaleren
-# ============================================================
 
-#' Signaleert waarden die aanwezig zijn, maar ongeldig voor hun kolom:
-#' niet-numerieke of negatieve bedragen, en niet-herkenbare datums.
-#' Ontbrekende waarden worden hier bewust niet meegeteld; die worden
-#' al gerapporteerd door signaleer_ontbrekende_waarden().
 signaleer_ongeldige_waarden <- function(gegevens) {
   datum_aanwezig <- !is_ontbrekend(gegevens$datum)
   begroot_numeriek <- suppressWarnings(as.numeric(gegevens$begroot_bedrag))
@@ -208,12 +143,7 @@ signaleer_ongeldige_waarden <- function(gegevens) {
   )
 }
 
-# ============================================================
-# Samenvattend: volledig data-inleesproces
-# ============================================================
 
-#' Voert het volledige data-inleesproces uit (stappen 1 t/m 7) en geeft
-#' zowel de ingelezen data als alle controleresultaten terug.
 voer_data_inleesproces_uit <- function(bestandspad) {
   gegevens <- lees_brondata(bestandspad)
 
@@ -228,7 +158,6 @@ voer_data_inleesproces_uit <- function(bestandspad) {
   )
 }
 
-#' Drukt een leesbare samenvatting van voer_data_inleesproces_uit() af.
 rapporteer_data_inleesproces <- function(rapport) {
   cat("=== Data-inleesproces ===\n")
   cat("Rijen:", rapport$dimensies$aantal_rijen, "\n")
@@ -254,12 +183,10 @@ rapporteer_data_inleesproces <- function(rapport) {
   print(rapport$ongeldige_waarden)
 }
 
-# ============================================================
-# Handmatig testen: Rscript R/data_inladen.R
-# ============================================================
 
-if (!interactive() && sys.nframe() == 0) {
-  standaardpad <- file.path("data", "raw", "transacties.csv")
-  rapport <- voer_data_inleesproces_uit(standaardpad)
-  rapporteer_data_inleesproces(rapport)
-}
+# Draait telkens dit bestand wordt uitgevoerd of gesourced (bv. via
+# Rscript, RStudio's "Source"-knop, of source("R/data_inladen.R")),
+# zodat het rapport direct zichtbaar is.
+standaardpad <- file.path("data", "raw", "transacties.csv")
+rapport <- voer_data_inleesproces_uit(standaardpad)
+rapporteer_data_inleesproces(rapport)
