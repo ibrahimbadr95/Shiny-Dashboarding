@@ -47,3 +47,10 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Generated data (reproducible via scripts/genereer_data.R)
+data/raw/
+data_processed/
+
+# macOS
+.DS_Store
