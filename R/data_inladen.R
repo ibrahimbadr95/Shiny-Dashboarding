@@ -184,9 +184,6 @@ rapporteer_data_inleesproces <- function(rapport) {
 }
 
 
-# Draait telkens dit bestand wordt uitgevoerd of gesourced (bv. via
-# Rscript, RStudio's "Source"-knop, of source("R/data_inladen.R")),
-# zodat het rapport direct zichtbaar is.
 standaardpad <- file.path("data", "raw", "transacties.csv")
 rapport <- voer_data_inleesproces_uit(standaardpad)
 rapporteer_data_inleesproces(rapport)
