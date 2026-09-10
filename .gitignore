@@ -47,3 +47,9 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Generated data
+data_processed/
+
+# macOS
+.DS_Store
