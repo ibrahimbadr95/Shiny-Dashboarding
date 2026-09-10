@@ -16,7 +16,7 @@ Ontwikkel een interactieve R Shiny-dashboardapplicatie waarmee fictieve overheid
 
 De applicatie moet volledig werken met synthetische data.
 
----
+------------------------------------------------------------------------
 
 ## 2. Technische eisen
 
@@ -36,7 +36,7 @@ De applicatie moet worden ontwikkeld met:
 
 Versiebeheer moet plaatsvinden met Git.
 
----
+------------------------------------------------------------------------
 
 ## 3. Dataset
 
@@ -74,7 +74,7 @@ Dit script genereert de synthetische dataset uit dit hoofdstuk. Het maakt ±7.50
 
 Uitvoeren vanaf de projectroot:
 
-```bash
+``` bash
 Rscript scripts/genereer_data.R
 ```
 
@@ -82,21 +82,21 @@ Het resultaat wordt weggeschreven naar `data/raw/transacties.csv` (niet meegenom
 
 **Let op:** dit script is door AI gegenereerd als hulpmiddel om snel een bruikbare startdataset te hebben. Het is bedoeld als vertrekpunt, niet als eindresultaat — controleer en pas het gerust aan waar nodig.
 
----
+------------------------------------------------------------------------
 
 ## 4. Data-inleesproces
 
 De applicatie moet:
 
-1. de brondata inlezen vanuit een CSV-bestand;
-2. controleren of alle verplichte kolommen aanwezig zijn;
-3. de datatypes controleren;
-4. het aantal rijen en kolommen bepalen;
-5. ontbrekende waarden signaleren;
-6. dubbele records signaleren;
-7. ongeldige waarden signaleren.
+1.  de brondata inlezen vanuit een CSV-bestand;
+2.  controleren of alle verplichte kolommen aanwezig zijn;
+3.  de datatypes controleren;
+4.  het aantal rijen en kolommen bepalen;
+5.  ontbrekende waarden signaleren;
+6.  dubbele records signaleren;
+7.  ongeldige waarden signaleren.
 
----
+------------------------------------------------------------------------
 
 ## 5. Data-opschoning
 
@@ -117,7 +117,7 @@ De opschoning moet minimaal bevatten:
 
 De opgeschoonde data moet apart kunnen worden opgeslagen.
 
----
+------------------------------------------------------------------------
 
 ## 6. Analysefuncties
 
@@ -137,7 +137,7 @@ Maak herbruikbare R-functies voor minimaal:
 - ontbrekende waarden;
 - afwijkende transacties.
 
----
+------------------------------------------------------------------------
 
 ## 7. Risicosignalen
 
@@ -159,7 +159,7 @@ Voor statistische afwijkingen moet minimaal één eenvoudige detectiemethode wor
 
 Een risicosignaal mag alleen worden gepresenteerd als indicatie voor nader onderzoek, niet als bewijs van een fout.
 
----
+------------------------------------------------------------------------
 
 ## 8. Shiny-dashboard
 
@@ -225,7 +225,7 @@ Toon minimaal:
 - aantal ongeldige datums;
 - aantal onbekende ministeries.
 
----
+------------------------------------------------------------------------
 
 ## 9. Interactiviteit
 
@@ -240,7 +240,7 @@ Het dashboard moet minimaal de volgende filters bevatten:
 
 Grafieken, tabellen en KPI's moeten automatisch worden bijgewerkt wanneer de filters wijzigen.
 
----
+------------------------------------------------------------------------
 
 ## 10. Visualisaties
 
@@ -260,7 +260,7 @@ Grafieken moeten duidelijke:
 - legenda's;
 - eenheden bevatten.
 
----
+------------------------------------------------------------------------
 
 ## 11. Tabellen
 
@@ -273,7 +273,7 @@ De tabel moet minimaal ondersteunen:
 - filteren;
 - paginering.
 
----
+------------------------------------------------------------------------
 
 ## 12. Codekwaliteit
 
@@ -281,7 +281,7 @@ De code moet worden opgesplitst in logische onderdelen.
 
 Gebruik minimaal de volgende structuur:
 
-```text
+``` text
 rijksuitgaven-audit-dashboard/
 ├── app.R
 ├── R/
@@ -307,7 +307,7 @@ Vermijd waar mogelijk:
 
 Gebruik duidelijke Nederlandse namen voor functies en variabelen.
 
----
+------------------------------------------------------------------------
 
 ## 13. README
 
@@ -325,7 +325,7 @@ De repository moet een `README.md` bevatten met minimaal:
 - beperkingen;
 - mogelijke toekomstige uitbreidingen.
 
----
+------------------------------------------------------------------------
 
 ## 14. Git
 
@@ -341,18 +341,18 @@ De repository moet meerdere betekenisvolle commits bevatten, bijvoorbeeld:
 - `risicosignalen toegevoegd`;
 - `dashboard filters toegevoegd`.
 
----
+------------------------------------------------------------------------
 
 ## 15. Eindresultaat
 
 Het eindproduct moet bestaan uit:
 
-1. een werkende R Shiny-applicatie;
-2. een synthetische dataset;
-3. reproduceerbare data-opschoning;
-4. herbruikbare analysefuncties;
-5. interactieve visualisaties;
-6. risicosignalering;
-7. datakwaliteitsanalyse;
-8. een goed gestructureerde Git-repository;
-9. een duidelijke README.
+1.  een werkende R Shiny-applicatie;
+2.  een synthetische dataset;
+3.  reproduceerbare data-opschoning;
+4.  herbruikbare analysefuncties;
+5.  interactieve visualisaties;
+6.  risicosignalering;
+7.  datakwaliteitsanalyse;
+8.  een goed gestructureerde Git-repository;
+9.  een duidelijke README.
